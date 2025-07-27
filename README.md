@@ -2,6 +2,19 @@
 
 A multi-component system for a museum exhibit that measures and displays weight data in real time. The project consists of a backend (Python), frontend (React + Vite), and firmware (Arduino/ESP32) for serial communication with a weight sensor.
 
+## Quick Start for Museum Installation (Raspberry Pi)
+
+For immediate kiosk mode deployment on Raspberry Pi:
+
+```bash
+# Copy project to Raspberry Pi and run:
+cd scripts
+sudo bash install-kiosk.sh
+sudo reboot
+```
+
+See [`scripts/README.md`](scripts/README.md) for complete kiosk setup documentation.
+
 ## Project Structure
 
 ```
@@ -82,9 +95,17 @@ weight-exhibit/
 
 ## Usage
 
+### Development Mode
+
 - Start the backend and frontend servers.
 - Connect the hardware or run the simulation script.
 - Open the frontend in your browser to view real-time weight data.
+
+### Production/Museum Mode
+
+- Use the kiosk mode installation for Raspberry Pi (see [`scripts/README.md`](scripts/README.md))
+- Automatic startup, monitoring, and recovery
+- Full-screen display perfect for museum installations
 
 ## License
 

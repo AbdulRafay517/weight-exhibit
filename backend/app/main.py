@@ -8,6 +8,7 @@ import json
 import signal
 import threading
 import atexit
+from datetime import datetime
 from contextlib import asynccontextmanager
 
 # Global variable to hold the serial reader
@@ -80,6 +81,22 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 websocket_manager = WebSocketManager()
+
+@app.get("/health")
+async def health():
+    """Health check endpoint for monitoring and load balancers."""
+    serial_connected = False
+    if serial_reader:
+        try:
+            serial_connected = hasattr(serial_reader, '_serial') and serial_reader._serial and serial_reader._serial.is_open
+        except Exception:
+            serial_connected = False
+    
+    return {
+        "status": "healthy", 
+        "timestamp": datetime.now().isoformat(),
+        "serial_connected": serial_connected
+    }
 
 @app.get("/debug/raw-data")
 def get_raw_data():
