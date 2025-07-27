@@ -15,6 +15,8 @@
   - [x] Create installation documentation
   - [x] Add health endpoint to backend
   - [x] Create test scripts and unit tests
+- [x] Replace emoji icons with images for Raspberry Pi compatibility (2025-07-28)
+- [x] Remove background animations to optimize performance for Raspberry Pi (2025-07-28)
 
 ### Active Tasks 🔄
 - [ ] Test kiosk mode on actual Raspberry Pi hardware

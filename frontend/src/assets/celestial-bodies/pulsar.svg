@@ -1,0 +1,24 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="pulsarGradient" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0%" style="stop-color:#FF69B4"/>
+      <stop offset="30%" style="stop-color:#FF1493"/>
+      <stop offset="70%" style="stop-color:#DC143C"/>
+      <stop offset="100%" style="stop-color:#8B0000"/>
+    </radialGradient>
+    <animate id="pulse" attributeName="r" values="0.4;0.8;0.4" dur="2s" repeatCount="indefinite"/>
+  </defs>
+  <circle cx="32" cy="32" r="18" fill="url(#pulsarGradient)" stroke="#FF1493" stroke-width="2"/>
+  <g opacity="0.8">
+    <line x1="32" y1="8" x2="32" y2="20" stroke="#FFB6C1" stroke-width="3"/>
+    <line x1="32" y1="44" x2="32" y2="56" stroke="#FFB6C1" stroke-width="3"/>
+    <line x1="8" y1="32" x2="20" y2="32" stroke="#FFB6C1" stroke-width="3"/>
+    <line x1="44" y1="32" x2="56" y2="32" stroke="#FFB6C1" stroke-width="3"/>
+    <line x1="14.6" y1="14.6" x2="22.2" y2="22.2" stroke="#FFB6C1" stroke-width="2"/>
+    <line x1="41.8" y1="41.8" x2="49.4" y2="49.4" stroke="#FFB6C1" stroke-width="2"/>
+    <line x1="14.6" y1="49.4" x2="22.2" y2="41.8" stroke="#FFB6C1" stroke-width="2"/>
+    <line x1="41.8" y1="22.2" x2="49.4" y2="14.6" stroke="#FFB6C1" stroke-width="2"/>
+  </g>
+  <circle cx="32" cy="32" r="8" fill="#FF69B4" opacity="0.9"/>
+  <circle cx="32" cy="32" r="4" fill="#FFFFFF"/>
+</svg>

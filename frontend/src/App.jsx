@@ -26,12 +26,16 @@ import {
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Custom animations
-const twinkle = keyframes`
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
-`;
+// Import celestial body images
+import earthImg from './assets/celestial-bodies/earth.svg';
+import moonImg from './assets/celestial-bodies/moon.svg';
+import sunImg from './assets/celestial-bodies/sun.svg';
+import mercuryImg from './assets/celestial-bodies/mercury.svg';
+import uranusImg from './assets/celestial-bodies/uranus.svg';
+import plutoImg from './assets/celestial-bodies/pluto.svg';
+import pulsarImg from './assets/celestial-bodies/pulsar.svg';
 
+// Custom animations
 const float = keyframes`
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -141,23 +145,6 @@ const StyledContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   touchAction: 'manipulation',
   WebkitTapHighlightColor: 'transparent',
-}));
-
-const StarField = styled(Box)(() => ({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  pointerEvents: 'none',
-  '& .star': {
-    position: 'absolute',
-    width: '2px',
-    height: '2px',
-    backgroundColor: 'white',
-    borderRadius: '50%',
-    animation: `${twinkle} 3s infinite`,
-  }
 }));
 
 const FloatingPlanet = styled(Box)(() => ({
@@ -363,49 +350,49 @@ function App() {
     {
       name: 'Earth',
       icon: <Public sx={{ fontSize: '4rem', color: '#4fc3f7' }} />,
-      emoji: '🌍',
+      image: earthImg,
       description: 'Our home planet',
       gradient: 'linear-gradient(45deg, #2196f3, #4caf50)'
     },
     {
       name: 'Moon',
       icon: <Science sx={{ fontSize: '4rem', color: '#bdbdbd' }} />,
-      emoji: '🌙',
+      image: moonImg,
       description: 'Earth\'s natural satellite',
       gradient: 'linear-gradient(45deg, #9e9e9e, #ffffff)'
     },
     {
       name: 'Mercury',
       icon: <Star sx={{ fontSize: '4rem', color: '#ff9800' }} />,
-      emoji: '🟠',
+      image: mercuryImg,
       description: 'Closest planet to the Sun',
       gradient: 'linear-gradient(45deg, #ff9800, #ffc107)'
     },
     {
       name: 'Sun',
       icon: <Brightness7 sx={{ fontSize: '4rem', color: '#ffeb3b' }} />,
-      emoji: '☀️',
+      image: sunImg,
       description: 'Our solar system\'s star',
       gradient: 'linear-gradient(45deg, #ffeb3b, #ff9800)'
     },
     {
       name: 'Uranus',
       icon: <Public sx={{ fontSize: '4rem', color: '#00bcd4' }} />,
-      emoji: '🪐',
+      image: uranusImg,
       description: 'The ice giant planet',
       gradient: 'linear-gradient(45deg, #00bcd4, #2196f3)'
     },
     {
       name: 'Pluto',
       icon: <Star sx={{ fontSize: '4rem', color: '#9c27b0' }} />,
-      emoji: '🪐',
+      image: plutoImg,
       description: 'The distant dwarf planet',
       gradient: 'linear-gradient(45deg, #9c27b0, #673ab7)'
     },
     {
       name: 'Pulsar',
       icon: <Star sx={{ fontSize: '4rem', color: '#e91e63' }} />,
-      emoji: '✨',
+      image: pulsarImg,
       description: 'Ultra-dense neutron star',
       gradient: 'linear-gradient(45deg, #e91e63, #9c27b0)'
     }
@@ -427,21 +414,6 @@ function App() {
     return ((getCurrentWeight() / earthWeight) * 100);
   };
 
-  // Generate random stars
-  const generateStars = () => {
-    return Array.from({ length: 50 }, (_, i) => (
-      <Box
-        key={i}
-        className="star"
-        sx={{
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 3}s`,
-        }}
-      />
-    ));
-  };
-
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -451,53 +423,33 @@ function App() {
         variants={containerVariants}
       >
         <StyledContainer>
-          {/* Animated Star Field */}
-          <StarField>{generateStars()}</StarField>
-
-          {/* Floating Decorative Planets */}
-          <motion.div
-            animate={{
-              y: [0, -10, 0],
-              rotate: [0, 5, -5, 0]
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            style={{
+          {/* Floating Decorative Planets - Simplified */}
+          <Box
+            sx={{
               position: 'absolute',
               top: '10%',
               right: '10%',
-              fontSize: '4rem',
-              opacity: 0.4,
+              width: '4rem',
+              height: '4rem',
+              opacity: 0.3,
               zIndex: 0
             }}
           >
-            🪐
-          </motion.div>
-          <motion.div
-            animate={{
-              y: [0, -15, 0],
-              x: [0, 10, 0]
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 2
-            }}
-            style={{
+            <img src={uranusImg} alt="Floating Uranus" style={{ width: '100%', height: '100%' }} />
+          </Box>
+          <Box
+            sx={{
               position: 'absolute',
               bottom: '20%',
               left: '15%',
-              fontSize: '4rem',
-              opacity: 0.4,
+              width: '4rem',
+              height: '4rem',
+              opacity: 0.3,
               zIndex: 0
             }}
           >
-            🌙
-          </motion.div>
+            <img src={moonImg} alt="Floating Moon" style={{ width: '100%', height: '100%' }} />
+          </Box>
 
           {/* Header */}
           <motion.div
@@ -510,23 +462,13 @@ function App() {
                 <Typography variant="h5" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
                   🌌 Cosmic Weights
                 </Typography>
-                <motion.div
-                  animate={{
-                    scale: isConnected ? [1, 1.1, 1] : 1
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: isConnected ? Infinity : 0
-                  }}
-                >
-                  <Chip
-                    icon={isConnected ? <Wifi /> : <WifiOff />}
-                    label={isConnected ? 'Connected' : 'Connecting...'}
-                    color={isConnected ? 'success' : 'error'}
-                    variant="outlined"
-                    size="small"
-                  />
-                </motion.div>
+                <Chip
+                  icon={isConnected ? <Wifi /> : <WifiOff />}
+                  label={isConnected ? 'Connected' : 'Connecting...'}
+                  color={isConnected ? 'success' : 'error'}
+                  variant="outlined"
+                  size="small"
+                />
               </Toolbar>
             </AppBar>
           </motion.div>
@@ -638,7 +580,7 @@ function App() {
                   animate="visible"
                   style={{
                     display: 'flex',
-                    gap: '12px',
+                    gap: '16px',
                     overflowX: 'auto',
                     paddingBottom: '6px',
                     paddingLeft: '6px',
@@ -679,19 +621,13 @@ function App() {
                         }}
                       >
                         <CardContent sx={{ textAlign: 'center', p: 0.8, '&:last-child': { pb: 0.8 } }}>
-                          <motion.div
-                            animate={{
-                              rotate: selectedPlanet === body.name ? [0, 360] : 0
-                            }}
-                            transition={{
-                              duration: 2,
-                              ease: "easeInOut"
-                            }}
-                          >
-                            <Box sx={{ fontSize: '1.5rem', mb: 0.3 }}>
-                              {body.emoji}
-                            </Box>
-                          </motion.div>
+                          <Box sx={{ width: '28px', height: '28px', mb: 0.3, mx: 'auto' }}>
+                            <img 
+                              src={body.image} 
+                              alt={body.name} 
+                              style={{ width: '100%', height: '100%' }} 
+                            />
+                          </Box>
                           <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 0.3 }}>
                             {body.name}
                           </Typography>
@@ -744,21 +680,13 @@ function App() {
                     }}
                   >
                     <Box sx={{ textAlign: 'center' }}>
-                      <motion.div
-                        animate={{
-                          scale: [1, 1.1, 1],
-                          rotate: [0, 5, -5, 0]
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        <Box sx={{ fontSize: '2.5rem', mb: 0.5 }}>
-                          {celestialBodies.find(body => body.name === selectedPlanet)?.emoji}
-                        </Box>
-                      </motion.div>
+                      <Box sx={{ width: '40px', height: '40px', mb: 0.5, mx: 'auto' }}>
+                        <img 
+                          src={celestialBodies.find(body => body.name === selectedPlanet)?.image} 
+                          alt={selectedPlanet} 
+                          style={{ width: '100%', height: '100%' }} 
+                        />
+                      </Box>
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
