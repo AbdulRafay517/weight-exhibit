@@ -139,6 +139,8 @@ const StyledContainer = styled(Box)(({ theme }) => ({
   color: 'white',
   display: 'flex',
   flexDirection: 'column',
+  touchAction: 'manipulation',
+  WebkitTapHighlightColor: 'transparent',
 }));
 
 const StarField = styled(Box)(() => ({
@@ -173,29 +175,32 @@ const PlanetCard = styled(Card)(({ theme, selected }) => ({
   borderRadius: '16px',
   cursor: 'pointer',
   transition: 'all 0.3s ease',
-  height: '140px',
-  minWidth: '120px',
-  width: '120px',
+  height: '120px',
+  minWidth: '100px',
+  width: '100px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   flexShrink: 0,
-  '&:hover': {
+  touchAction: 'manipulation',
+  userSelect: 'none',
+  '&:hover, &:active': {
     transform: 'scale(1.05)',
     border: '2px solid #90caf9',
-    background: 'rgba(255, 255, 255, 0.15)',
+    background: 'rgba(255, 255, 255, 0.18)',
   }
 }));
 
 const WeightDisplay = styled(Typography)(({ theme }) => ({
-  fontSize: '2.5rem',
+  fontSize: '1.5rem',
   fontWeight: 'bold',
   background: 'linear-gradient(45deg, #90caf9, #f48fb1)',
   backgroundClip: 'text',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   textAlign: 'center',
+  letterSpacing: 1,
 }));
 
 // Dark theme for space effect
@@ -217,9 +222,45 @@ const darkTheme = createTheme({
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontWeight: 700,
+      fontSize: '1.5rem',
+      '@media (max-width: 1200px)': { fontSize: '1.2rem' },
     },
     h2: {
       fontWeight: 600,
+      fontSize: '1.2rem',
+      '@media (max-width: 1200px)': { fontSize: '1.1rem' },
+    },
+    h3: {
+      fontSize: '1.1rem',
+      '@media (max-width: 1200px)': { fontSize: '1rem' },
+    },
+    h4: {
+      fontSize: '1rem',
+      '@media (max-width: 1200px)': { fontSize: '0.95rem' },
+    },
+    h5: {
+      fontSize: '0.95rem',
+      '@media (max-width: 1200px)': { fontSize: '0.9rem' },
+    },
+    h6: {
+      fontSize: '0.9rem',
+      '@media (max-width: 1200px)': { fontSize: '0.85rem' },
+    },
+    body1: {
+      fontSize: '0.95rem',
+      '@media (max-width: 1200px)': { fontSize: '0.9rem' },
+    },
+    body2: {
+      fontSize: '0.9rem',
+      '@media (max-width: 1200px)': { fontSize: '0.85rem' },
+    },
+    subtitle1: {
+      fontSize: '0.95rem',
+      '@media (max-width: 1200px)': { fontSize: '0.85rem' },
+    },
+    caption: {
+      fontSize: '0.8rem',
+      '@media (max-width: 1200px)': { fontSize: '0.7rem' },
     },
   },
   components: {
@@ -228,7 +269,36 @@ const darkTheme = createTheme({
         root: {
           backdropFilter: 'blur(10px)',
           background: 'rgba(255, 255, 255, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          border: '2px solid rgba(255, 255, 255, 0.2)',
+          borderRadius: '24px',
+          padding: '32px',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          minWidth: '80px',
+          minHeight: '56px',
+          fontSize: '1.3rem',
+          borderRadius: '16px',
+          padding: '16px 32px',
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          fontSize: '1.1rem',
+          minHeight: '40px',
+        },
+      },
+    },
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          height: '18px',
+          borderRadius: '9px',
         },
       },
     },
@@ -461,14 +531,25 @@ function App() {
             </AppBar>
           </motion.div>
 
-          <Container maxWidth="xl" sx={{ py: 2, position: 'relative', zIndex: 1, height: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <Container maxWidth="xl" sx={{
+            py: 1,
+            position: 'relative',
+            zIndex: 1,
+            height: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            maxWidth: '900px !important',
+            minWidth: '600px',
+            justifyContent: 'flex-start',
+            overflow: 'hidden',
+          }}>
             {/* Hero Section */}
             <motion.div
               variants={cardVariants}
               initial="hidden"
               animate="visible"
             >
-              <Card sx={{ mb: 2, p: 2, textAlign: 'center', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
+              <Card sx={{ mb: 1, p: 1, textAlign: 'center', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
                 <Box sx={{ position: 'relative', zIndex: 2 }}>
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -496,7 +577,7 @@ function App() {
                     animate="visible"
                     key={sensorData.mass_kg} // Re-animate when mass changes
                   >
-                    <Box sx={{ mb: 1 }}>
+                  <Box sx={{ mb: 0.5 }}>
                       {isLoading ? (
                         <CircularProgress size={40} />
                       ) : (
@@ -506,6 +587,30 @@ function App() {
                       )}
                     </Box>
                   </motion.div>
+
+                  {/* Definitions for Mass and Weight */}
+                  <Box sx={{
+                    background: 'rgba(255,255,255,0.10)',
+                    borderRadius: 1,
+                    p: 1,
+                    mb: 1,
+                    maxWidth: 400,
+                    mx: 'auto',
+                    boxShadow: 1,
+                  }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#90caf9', mb: 0.5 }}>
+                      What is Mass?
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <b>Mass</b> is the amount of matter in an object. It is measured in kilograms (kg) and does not change, no matter where the object is in the universe.
+                    </Typography>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#f48fb1', mb: 0.5 }}>
+                      What is Weight?
+                    </Typography>
+                    <Typography variant="body2">
+                      <b>Weight</b> is the force with which gravity pulls on an object. It depends on both the object's mass and the gravity of the celestial body. Weight is measured in newtons (N) and changes depending on where you are in the universe.
+                    </Typography>
+                  </Box>
                 </Box>
               </Card>
             </motion.div>
@@ -515,9 +620,9 @@ function App() {
               variants={cardVariants}
               initial="hidden"
               animate="visible"
-              style={{ marginBottom: '16px', flexShrink: 0 }}
+              style={{ marginBottom: '8px', flexShrink: 0 }}
             >
-              <Box sx={{ mb: 2, flexShrink: 0 }}>
+              <Box sx={{ mb: 1, flexShrink: 0 }}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -533,12 +638,13 @@ function App() {
                   animate="visible"
                   style={{
                     display: 'flex',
-                    gap: '16px',
+                    gap: '12px',
                     overflowX: 'auto',
-                    paddingBottom: '8px',
-                    paddingLeft: '8px',
-                    paddingRight: '8px',
-                    justifyContent: 'center'
+                    paddingBottom: '6px',
+                    paddingLeft: '6px',
+                    paddingRight: '6px',
+                    justifyContent: 'center',
+                    WebkitOverflowScrolling: 'touch',
                   }}
                   sx={{ 
                     '&::-webkit-scrollbar': {
@@ -572,7 +678,7 @@ function App() {
                           border: selectedPlanet === body.name ? '2px solid #90caf9' : '1px solid rgba(255, 255, 255, 0.2)',
                         }}
                       >
-                        <CardContent sx={{ textAlign: 'center', p: 1, '&:last-child': { pb: 1 } }}>
+                        <CardContent sx={{ textAlign: 'center', p: 0.8, '&:last-child': { pb: 0.8 } }}>
                           <motion.div
                             animate={{
                               rotate: selectedPlanet === body.name ? [0, 360] : 0
@@ -582,11 +688,11 @@ function App() {
                               ease: "easeInOut"
                             }}
                           >
-                            <Box sx={{ fontSize: '2rem', mb: 0.5 }}>
+                            <Box sx={{ fontSize: '1.5rem', mb: 0.3 }}>
                               {body.emoji}
                             </Box>
                           </motion.div>
-                          <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 0.3 }}>
                             {body.name}
                           </Typography>
                           <motion.div
@@ -595,7 +701,7 @@ function App() {
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ duration: 0.3 }}
                           >
-                            <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#90caf9' }}>
+                            <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#90caf9', fontSize: '0.85rem' }}>
                               {formatWeight(sensorData.weights[body.name] || 0)}
                             </Typography>
                           </motion.div>
@@ -614,7 +720,14 @@ function App() {
               animate="visible"
               style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}
             >
-              <Card sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+              <Card sx={{ 
+                p: 1, 
+                flex: 1, 
+                display: 'flex', 
+                flexDirection: 'column', 
+                minHeight: 0, 
+                justifyContent: 'space-between' 
+              }}>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={selectedPlanet}
@@ -622,9 +735,15 @@ function App() {
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    style={{ textAlign: 'center', marginBottom: '16px' }}
+                    style={{ 
+                      textAlign: 'center', 
+                      flex: '0 0 auto',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center'
+                    }}
                   >
-                    <Box sx={{ textAlign: 'center', mb: 2 }}>
+                    <Box sx={{ textAlign: 'center' }}>
                       <motion.div
                         animate={{
                           scale: [1, 1.1, 1],
@@ -636,7 +755,7 @@ function App() {
                           ease: "easeInOut"
                         }}
                       >
-                        <Box sx={{ fontSize: '4rem', mb: 1 }}>
+                        <Box sx={{ fontSize: '2.5rem', mb: 0.5 }}>
                           {celestialBodies.find(body => body.name === selectedPlanet)?.emoji}
                         </Box>
                       </motion.div>
@@ -645,7 +764,7 @@ function App() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
                       >
-                        <Typography variant="h4" gutterBottom>
+                        <Typography variant="h4" gutterBottom sx={{ mb: 0.5 }}>
                           {selectedPlanet}
                         </Typography>
                       </motion.div>
@@ -654,7 +773,7 @@ function App() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.3 }}
                       >
-                        <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+                        <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
                           {celestialBodies.find(body => body.name === selectedPlanet)?.description}
                         </Typography>
                       </motion.div>
@@ -677,35 +796,65 @@ function App() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
-                  style={{ maxWidth: '500px', margin: '0 auto', flex: 1 }}
+                  style={{ 
+                    width: '100%', 
+                    flex: '1 1 auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    minHeight: 0
+                  }}
                 >
-                  <Box sx={{ maxWidth: 500, mx: 'auto', flex: 1 }}>
-                    <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+                  <Box sx={{ 
+                    width: '100%', 
+                    maxWidth: '100%',
+                    px: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center'
+                  }}>
+                    <Typography variant="h6" sx={{ 
+                      mb: 1, 
+                      textAlign: 'center', 
+                      fontSize: 'clamp(0.8rem, 2.5vw, 1rem)'
+                    }}>
                       {selectedPlanet === 'Earth' ? 
                         'This is the normal Earth weight!' : 
                         `${getWeightRatio().toFixed(1)}% of the Earth weight`
                       }
                     </Typography>
                     
-                    <Box sx={{ mb: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography variant="body2">Lighter</Typography>
-                        <Typography variant="body2">Earth Weight</Typography>
-                        <Typography variant="body2">Heavier</Typography>
+                    <Box sx={{ mb: 1, width: '100%' }}>
+                      <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        mb: 0.5,
+                        width: '100%'
+                      }}>
+                        <Typography variant="body2" sx={{ fontSize: 'clamp(0.7rem, 2vw, 0.85rem)' }}>
+                          Lighter
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontSize: 'clamp(0.7rem, 2vw, 0.85rem)' }}>
+                          Earth Weight
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontSize: 'clamp(0.7rem, 2vw, 0.85rem)' }}>
+                          Heavier
+                        </Typography>
                       </Box>
-                      <Box sx={{ position: 'relative' }}>
+                      <Box sx={{ position: 'relative', width: '100%' }}>
                         <motion.div
                           initial={{ scaleX: 0 }}
                           animate={{ scaleX: 1 }}
                           transition={{ duration: 1, delay: 0.5 }}
-                          style={{ originX: 0 }}
+                          style={{ originX: 0, width: '100%' }}
                         >
                           <LinearProgress 
                             variant="determinate" 
                             value={Math.min(getWeightRatio(), 100)} 
                             sx={{ 
-                              height: 10, 
-                              borderRadius: 5,
+                              height: 'clamp(8px, 1.5vh, 12px)', 
+                              borderRadius: 'clamp(4px, 0.75vh, 6px)',
+                              width: '100%',
                               '& .MuiLinearProgress-bar': {
                                 background: celestialBodies.find(body => body.name === selectedPlanet)?.gradient
                               }
@@ -718,9 +867,10 @@ function App() {
                             left: '50%',
                             top: 0,
                             bottom: 0,
-                            width: '2px',
+                            width: '1px',
                             backgroundColor: 'white',
-                            transform: 'translateX(-50%)'
+                            transform: 'translateX(-50%)',
+                            borderRadius: 0.5,
                           }}
                         />
                       </Box>
@@ -738,9 +888,6 @@ function App() {
             transition={{ duration: 0.6, delay: 1 }}
           >
             <Box sx={{ textAlign: 'center', py: 1, flexShrink: 0 }}>
-              <Typography variant="caption" color="text.secondary">
-                © 2024 Cosmic Weights. All rights reserved.
-              </Typography>
             </Box>
           </motion.div>
         </StyledContainer>
