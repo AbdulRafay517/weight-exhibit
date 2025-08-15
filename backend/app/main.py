@@ -1,7 +1,7 @@
 from . import config
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from .serial_reader import SerialReader
-from .models import WeightData
+from .models import ArduinoWeightData
 from .websocket_manager import WebSocketManager
 import asyncio
 import json
@@ -117,43 +117,48 @@ def get_raw_data():
         "is_none": data is None
     }
 
-@app.get("/api/weight", response_model=WeightData)
+@app.get("/api/weight", response_model=ArduinoWeightData)
 def get_latest_weight():
     try:
-        # Use the safe method to prevent blocking/deadlock
         data = serial_reader.get_latest_data_safe() if serial_reader else None
         if data is None:
             # Return default data if no serial data available
-            return {
+            default_data = {
+                "raw": 0.0,
+                "grams": 0.0,
                 "mass_kg": 0.0,
-                "weights": {
+                "weights_newton": {
+                    "Sun": 0.0,
                     "Mercury": 0.0,
-                    "Venus": 0.0,
                     "Earth": 0.0,
-                    "Mars": 0.0,
-                    "Jupiter": 0.0,
-                    "Saturn": 0.0,
+                    "Moon": 0.0,
                     "Uranus": 0.0,
-                    "Neptune": 0.0
+                    "Pluto": 0.0,
+                    "Pulsar": 0.0
                 }
             }
+            print(f"[DEBUG] API returning default data: {default_data}")
+            return default_data
+        print(f"[DEBUG] API returning serial data: {data}")
         return data
     except Exception as e:
         print(f"Error in get_latest_weight: {e}")
-        # Return default data on error
-        return {
+        error_data = {
+            "raw": 0.0,
+            "grams": 0.0,
             "mass_kg": 0.0,
-            "weights": {
+            "weights_newton": {
+                "Sun": 0.0,
                 "Mercury": 0.0,
-                "Venus": 0.0,
                 "Earth": 0.0,
-                "Mars": 0.0,
-                "Jupiter": 0.0,
-                "Saturn": 0.0,
+                "Moon": 0.0,
                 "Uranus": 0.0,
-                "Neptune": 0.0
+                "Pluto": 0.0,
+                "Pulsar": 0.0
             }
         }
+        print(f"[DEBUG] API returning error fallback data: {error_data}")
+        return error_data
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -166,39 +171,44 @@ async def websocket_endpoint(websocket: WebSocket):
                 if data is None:
                     # Send default data if no serial data available
                     default_data = {
+                        "raw": 0.0,
+                        "grams": 0.0,
                         "mass_kg": 0.0,
-                        "weights": {
+                        "weights_newton": {
+                            "Sun": 0.0,
                             "Mercury": 0.0,
-                            "Venus": 0.0,
                             "Earth": 0.0,
-                            "Mars": 0.0,
-                            "Jupiter": 0.0,
-                            "Saturn": 0.0,
+                            "Moon": 0.0,
                             "Uranus": 0.0,
-                            "Neptune": 0.0
+                            "Pluto": 0.0,
+                            "Pulsar": 0.0
                         }
                     }
+                    print(f"[DEBUG] Sending default data: {default_data}")
                     await websocket.send_json(default_data)
                 else:
+                    print(f"[DEBUG] Sending serial data: {data}")
                     await websocket.send_json(data)
             except Exception as e:
                 print(f"Error getting serial data in WebSocket: {e}")
                 # Send default data on error
                 default_data = {
+                    "raw": 0.0,
+                    "grams": 0.0,
                     "mass_kg": 0.0,
-                    "weights": {
+                    "weights_newton": {
+                        "Sun": 0.0,
                         "Mercury": 0.0,
-                        "Venus": 0.0,
                         "Earth": 0.0,
-                        "Mars": 0.0,
-                        "Jupiter": 0.0,
-                        "Saturn": 0.0,
+                        "Moon": 0.0,
                         "Uranus": 0.0,
-                        "Neptune": 0.0
+                        "Pluto": 0.0,
+                        "Pulsar": 0.0
                     }
                 }
+                print(f"[DEBUG] Sending error fallback data: {default_data}")
                 await websocket.send_json(default_data)
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(1.0)
     except WebSocketDisconnect:
         websocket_manager.disconnect(websocket)
     except asyncio.CancelledError:

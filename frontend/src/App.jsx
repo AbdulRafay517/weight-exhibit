@@ -294,12 +294,14 @@ const darkTheme = createTheme({
 
 function App() {
   const [sensorData, setSensorData] = useState({
+    raw: 0,
+    grams: 0,
     mass_kg: 0,
-    weights: {
-      Earth: 0,
-      Moon: 0,
+    weights_newton: {
       Sun: 0,
       Mercury: 0,
+      Earth: 0,
+      Moon: 0,
       Uranus: 0,
       Pluto: 0,
       Pulsar: 0
@@ -309,6 +311,41 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPlanet, setSelectedPlanet] = useState('Earth');
+  
+  // Buffer to store the last 5 readings for averaging
+  const [dataBuffer, setDataBuffer] = useState([]);
+
+  // Function to calculate average of multiple data readings
+  const calculateAverageData = (readings) => {
+    if (readings.length === 0) return null;
+    
+    const avgData = {
+      raw: 0,
+      grams: 0,
+      mass_kg: 0,
+      weights_newton: {
+        Sun: 0,
+        Mercury: 0,
+        Earth: 0,
+        Moon: 0,
+        Uranus: 0,
+        Pluto: 0,
+        Pulsar: 0
+      }
+    };
+    
+    // Calculate averages
+    avgData.raw = readings.reduce((sum, r) => sum + r.raw, 0) / readings.length;
+    avgData.grams = readings.reduce((sum, r) => sum + r.grams, 0) / readings.length;
+    avgData.mass_kg = readings.reduce((sum, r) => sum + r.mass_kg, 0) / readings.length;
+    
+    // Average each celestial body weight
+    Object.keys(avgData.weights_newton).forEach(planet => {
+      avgData.weights_newton[planet] = readings.reduce((sum, r) => sum + (r.weights_newton[planet] || 0), 0) / readings.length;
+    });
+    
+    return avgData;
+  };
 
   // WebSocket connection
   useEffect(() => {
@@ -324,7 +361,14 @@ function App() {
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          setSensorData(data);
+          
+          // Add new data to buffer
+          setDataBuffer(prevBuffer => {
+            const newBuffer = [...prevBuffer, data];
+            // Keep only the last 10 readings
+            return newBuffer.slice(-5);
+          });
+          
         } catch (error) {
           console.error('Error parsing WebSocket data:', error);
         }
@@ -345,6 +389,32 @@ function App() {
     
     connectWebSocket();
   }, []);
+
+  // Effect to process the data buffer every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (dataBuffer.length > 0) {
+        // Calculate average of all readings in buffer
+        const avgData = calculateAverageData(dataBuffer);
+        
+        if (avgData) {
+          // Replace negative values with 0
+          const safeData = {
+            ...avgData,
+            raw: avgData.raw < 0 ? 0 : avgData.raw,
+            grams: avgData.grams < 0 ? 0 : avgData.grams,
+            mass_kg: avgData.mass_kg < 0 ? 0 : avgData.mass_kg,
+            weights_newton: Object.fromEntries(
+              Object.entries(avgData.weights_newton || {}).map(([k, v]) => [k, v < 0 ? 0 : v])
+            )
+          };
+          setSensorData(safeData);
+        }
+      }
+    }, 800);
+
+    return () => clearInterval(interval);
+  }, [dataBuffer]);
 
   const celestialBodies = [
     {
@@ -399,18 +469,20 @@ function App() {
   ];
 
   const getCurrentWeight = () => {
-    return sensorData.weights[selectedPlanet] || 0;
+    const val = sensorData.weights_newton[selectedPlanet] || 0;
+    return val < 0 ? 0 : val;
   };
 
   const formatWeight = (weight) => {
-    if (weight >= 1000) {
-      return `${(weight / 1000).toFixed(2)} kN`;
+    const safeWeight = weight < 0 ? 0 : weight;
+    if (safeWeight >= 1000) {
+      return `${(safeWeight / 1000).toFixed(2)} kN`;
     }
-    return `${weight.toFixed(1)} N`;
+    return `${safeWeight.toFixed(1)} N`;
   };
 
   const getWeightRatio = () => {
-    const earthWeight = sensorData.weights.Earth || 1;
+    const earthWeight = sensorData.weights_newton.Earth || 1;
     return ((getCurrentWeight() / earthWeight) * 100);
   };
 
@@ -524,7 +596,7 @@ function App() {
                         <CircularProgress size={40} />
                       ) : (
                         <WeightDisplay>
-                          Mass: {sensorData.mass_kg.toFixed(2)} kg
+                          Mass: {(sensorData.mass_kg < 0 ? 0 : sensorData.mass_kg).toFixed(2)} kg
                         </WeightDisplay>
                       )}
                     </Box>
@@ -632,13 +704,13 @@ function App() {
                             {body.name}
                           </Typography>
                           <motion.div
-                            key={`${body.name}-${sensorData.weights[body.name]}`}
+                            key={`${body.name}-${sensorData.weights_newton[body.name]}`}
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ duration: 0.3 }}
                           >
                             <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#90caf9', fontSize: '0.85rem' }}>
-                              {formatWeight(sensorData.weights[body.name] || 0)}
+                              {formatWeight(sensorData.weights_newton[body.name] || 0)}
                             </Typography>
                           </motion.div>
                         </CardContent>

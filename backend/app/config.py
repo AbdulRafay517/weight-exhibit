@@ -10,7 +10,7 @@ def get_default_serial_port():
     
     if system == "windows":
         # Windows uses COM ports
-        return "COM14"  # Common default, can be overridden with env var
+        return "COM9"  # Common default, can be overridden with env var
     elif system == "linux":
         # Linux/Raspberry Pi OS uses /dev/tty devices
         return "/dev/ttyUSB0"  # Common for USB-to-serial adapters

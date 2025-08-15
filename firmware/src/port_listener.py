@@ -1,9 +1,9 @@
 import serial
 
 # Adjust COM port and baud rate as needed
-ser = serial.Serial('COM14', 115200, timeout=1)
+ser = serial.Serial('COM9', 115200, timeout=1)
 
-print("Listening on COM14...")
+print("Listening on COM9...")
 
 try:
     while True:

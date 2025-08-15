@@ -104,27 +104,26 @@ class SerialReader:
         self._thread.start()
     
     def _validate_data(self, data):
-        """Validate that the data has the expected structure."""
+        """Validate that the data has the expected Arduino structure."""
         if not isinstance(data, dict):
             return False
-        
-        # Check for required fields
-        if "mass_kg" not in data or "weights" not in data:
+        required_fields = ["raw", "grams", "mass_kg", "weights_newton"]
+        for field in required_fields:
+            if field not in data:
+                return False
+        if not isinstance(data["raw"], (int, float)):
             return False
-        
-        # Check that mass is a number
+        if not isinstance(data["grams"], (int, float)):
+            return False
         if not isinstance(data["mass_kg"], (int, float)):
             return False
-        
-        # Check that weights is a dictionary
-        if not isinstance(data["weights"], dict):
+        if not isinstance(data["weights_newton"], dict):
             return False
-        
-        # Check that weight values are numbers
-        for weight in data["weights"].values():
-            if not isinstance(weight, (int, float)):
+        for k in ["Sun", "Mercury", "Earth", "Moon", "Uranus", "Pluto", "Pulsar"]:
+            if k not in data["weights_newton"]:
                 return False
-        
+            if not isinstance(data["weights_newton"][k], (int, float)):
+                return False
         return True
     
     def _suggest_port_alternatives(self):
