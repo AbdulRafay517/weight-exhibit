@@ -35,6 +35,9 @@ import uranusImg from './assets/celestial-bodies/uranus.svg';
 import plutoImg from './assets/celestial-bodies/pluto.svg';
 import pulsarImg from './assets/celestial-bodies/pulsar.svg';
 
+// Import background image
+import backgroundImg from './assets/backgrounds/bg4.jpg';
+
 // Custom animations
 const float = keyframes`
   0%, 100% { transform: translateY(0px); }
@@ -137,7 +140,10 @@ const selectedPlanetVariants = {
 // Styled components
 const StyledContainer = styled(Box)(({ theme }) => ({
   height: '100vh',
-  background: 'linear-gradient(135deg, #0f0f23 0%, #1e1e3f 25%, #2d1b69 50%, #0f0f23 100%)',
+  background: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${backgroundImg})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
   position: 'relative',
   overflow: 'hidden',
   color: 'white',
